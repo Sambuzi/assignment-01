@@ -9,6 +9,7 @@ public class BoidsSimulator {
     private final List<BoidThread> threads;
     private final BoidsView view;
     private boolean isPaused = false;
+    private boolean isRunning = false; // Stato della simulazione
 
     public BoidsSimulator(BoidsModel model) {
         this.model = model;
@@ -21,7 +22,11 @@ public class BoidsSimulator {
     }
 
     public void startSimulation() {
-        stopSimulation(); // Ferma simulazioni precedenti
+        if (isRunning) {
+            return; // Evita di avviare una nuova simulazione se è già in esecuzione
+        }
+
+        stopSimulation(); // Ferma simulazioni precedenti e ripristina lo stato iniziale
 
         int boidCount = view.getBoidCount(); // Numero di boid dalla GUI
         model.getBoids().clear(); // Pulisci il modello esistente
@@ -41,6 +46,8 @@ public class BoidsSimulator {
             thread.start();
         }
 
+        isRunning = true; // La simulazione è in esecuzione
+
         // Aggiorna la GUI periodicamente
         new Timer(40, e -> {
             if (!isPaused) {
@@ -50,13 +57,42 @@ public class BoidsSimulator {
     }
 
     public void togglePause() {
+        if (!isRunning) {
+            return; // Non fare nulla se la simulazione non è in esecuzione
+        }
+
         isPaused = !isPaused;
+
+        if (isPaused) {
+            for (BoidThread thread : threads) {
+                thread.pauseThread(); // Metti in pausa ogni thread
+            }
+            JOptionPane.showMessageDialog(view, "Simulazione sospesa.", "Pausa", JOptionPane.INFORMATION_MESSAGE);
+        } else {
+            for (BoidThread thread : threads) {
+                thread.resumeThread(); // Riprendi ogni thread
+            }
+            JOptionPane.showMessageDialog(view, "Simulazione ripresa.", "Ripresa", JOptionPane.INFORMATION_MESSAGE);
+        }
     }
 
     public void stopSimulation() {
+        if (!isRunning) {
+            return;
+        }
+    
         for (BoidThread thread : threads) {
             thread.stopThread();
         }
         threads.clear();
+    
+        synchronized (model) {
+            model.getBoids().clear(); // Questo non funzionava prima!
+        }
+    
+        view.updateView();
+        isRunning = false;
+        isPaused = false;
     }
+    
 }

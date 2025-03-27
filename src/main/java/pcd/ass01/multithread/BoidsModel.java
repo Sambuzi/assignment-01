@@ -12,8 +12,9 @@ public class BoidsModel {
     }
 
     public synchronized List<Boid> getBoids() {
-        return new ArrayList<>(boids); // Ritorna una copia per evitare problemi di concorrenza
+        return boids; // Restituisci direttamente la lista sincronizzata
     }
+    
 
     public synchronized void addBoid(Boid boid) {
         boids.add(boid);
