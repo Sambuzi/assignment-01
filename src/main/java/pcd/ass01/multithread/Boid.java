@@ -57,7 +57,7 @@ public class Boid {
     }
 
     private void limitVelocity() {
-        double maxSpeed = 2.0; // Velocità massima
+        double maxSpeed = 1.0; // Velocità massima
         double speed = Math.sqrt(velocity.getX() * velocity.getX() + velocity.getY() * velocity.getY());
         if (speed > maxSpeed) {
             velocity = velocity.normalize().mul(maxSpeed);

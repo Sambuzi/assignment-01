@@ -16,6 +16,8 @@ public class BoidsPanel extends JPanel {
         super.paintComponent(g);
         Graphics2D g2d = (Graphics2D) g;
 
+        g2d.setColor(Color.BLUE);
+
         List<Boid> boids = model.getBoids();
         for (Boid boid : boids) {
             P2d position = boid.getPosition();

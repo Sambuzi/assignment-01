@@ -43,9 +43,15 @@ public class BoidsView extends JFrame {
 
     public int getBoidCount() {
         try {
-            return Integer.parseInt(boidCountField.getText());
+            int count = Integer.parseInt(boidCountField.getText());
+            if (count <= 0) {
+                throw new NumberFormatException("Il numero di boid deve essere maggiore di 0.");
+            }
+            return count;
         } catch (NumberFormatException e) {
-            return 50;
+            JOptionPane.showMessageDialog(this, "Inserisci un numero valido di boid (maggiore di 0).", "Errore", JOptionPane.ERROR_MESSAGE);
+            boidCountField.setText("500"); // Ripristina il valore predefinito
+            return 500; // Valore predefinito
         }
     }
 
