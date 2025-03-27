@@ -3,6 +3,11 @@ package pcd.ass01.multithread;
 import java.util.List;
 
 public class Boid {
+    private static final double MAX_SPEED = 1.0; // Velocità massima
+    private static final double SEPARATION_DISTANCE = 20.0; // Distanza minima per separazione
+    private static final double ALIGNMENT_DISTANCE = 60.0; // Distanza massima per allineamento
+    private static final double COHESION_DISTANCE = 60.0; // Distanza massima per coesione
+
     private P2d position;
     private V2d velocity;
 
@@ -11,22 +16,17 @@ public class Boid {
         this.velocity = velocity;
     }
 
-    public void updateVelocity(BoidsModel model) {
+    public void updateVelocity(BoidsModel model, double separationWeight, double alignmentWeight, double cohesionWeight) {
         List<Boid> boids = model.getBoids();
-    
+
         V2d separation = computeSeparation(boids);
         V2d alignment = computeAlignment(boids);
         V2d cohesion = computeCohesion(boids);
-    
-        // Pesi ridotti per diminuire l'influenza dei vettori
-        double separationWeight = 1.0;
-        double alignmentWeight = 0.5;
-        double cohesionWeight = 0.5;
-    
+
         velocity = velocity.sum(separation.mul(separationWeight))
                            .sum(alignment.mul(alignmentWeight))
                            .sum(cohesion.mul(cohesionWeight));
-    
+
         limitVelocity(); // Limita la velocità
     }
 
@@ -57,10 +57,9 @@ public class Boid {
     }
 
     private void limitVelocity() {
-        double maxSpeed = 1.0; // Velocità massima
         double speed = Math.sqrt(velocity.getX() * velocity.getX() + velocity.getY() * velocity.getY());
-        if (speed > maxSpeed) {
-            velocity = velocity.normalize().mul(maxSpeed);
+        if (speed > MAX_SPEED) {
+            velocity = velocity.normalize().mul(MAX_SPEED);
         }
     }
 
@@ -69,7 +68,7 @@ public class Boid {
         for (Boid other : boids) {
             if (other != this) {
                 double distance = position.distanceTo(other.getPosition());
-                if (distance < 20) { // Distanza minima per separazione
+                if (distance < SEPARATION_DISTANCE) {
                     V2d diff = position.sub(other.getPosition());
                     separation = separation.sum(diff.normalize().mul(1.0 / distance));
                 }
@@ -84,7 +83,7 @@ public class Boid {
         for (Boid other : boids) {
             if (other != this) {
                 double distance = position.distanceTo(other.getPosition());
-                if (distance < 50) { // Distanza massima per allineamento
+                if (distance < ALIGNMENT_DISTANCE) {
                     alignment = alignment.sum(other.getVelocity());
                     count++;
                 }
@@ -99,7 +98,7 @@ public class Boid {
         for (Boid other : boids) {
             if (other != this) {
                 double distance = position.distanceTo(other.getPosition());
-                if (distance < 50) { // Distanza massima per coesione
+                if (distance < COHESION_DISTANCE) {
                     centerOfMass = new P2d(centerOfMass.getX() + other.getPosition().getX(),
                                            centerOfMass.getY() + other.getPosition().getY());
                     count++;

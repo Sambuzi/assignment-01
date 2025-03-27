@@ -11,6 +11,10 @@ public class BoidsView extends JFrame {
     private final JButton stopButton;
     private final JTextField boidCountField;
 
+    private final JSlider separationSlider;
+    private final JSlider alignmentSlider;
+    private final JSlider cohesionSlider;
+
     public BoidsView(BoidsModel model, ActionListener startListener, ActionListener pauseListener, ActionListener stopListener) {
         setTitle("Boids Simulation - Multithread Version");
         setSize(800, 600);
@@ -34,6 +38,23 @@ public class BoidsView extends JFrame {
 
         add(controlPanel, BorderLayout.SOUTH);
 
+        // Slider Panel
+        JPanel sliderPanel = new JPanel();
+        sliderPanel.setLayout(new GridLayout(3, 2));
+
+        separationSlider = new JSlider(0, 200, 100); // Valore iniziale 1.0 (100%)
+        alignmentSlider = new JSlider(0, 200, 50);  // Valore iniziale 0.5 (50%)
+        cohesionSlider = new JSlider(0, 200, 50);   // Valore iniziale 0.5 (50%)
+
+        sliderPanel.add(new JLabel("Separation Weight:"));
+        sliderPanel.add(separationSlider);
+        sliderPanel.add(new JLabel("Alignment Weight:"));
+        sliderPanel.add(alignmentSlider);
+        sliderPanel.add(new JLabel("Cohesion Weight:"));
+        sliderPanel.add(cohesionSlider);
+
+        add(sliderPanel, BorderLayout.NORTH);
+
         startButton.addActionListener(startListener);
         pauseButton.addActionListener(pauseListener);
         stopButton.addActionListener(stopListener);
@@ -53,6 +74,18 @@ public class BoidsView extends JFrame {
             boidCountField.setText("500"); // Ripristina il valore predefinito
             return 500; // Valore predefinito
         }
+    }
+
+    public double getSeparationWeight() {
+        return separationSlider.getValue() / 100.0; // Converti da percentuale a valore decimale
+    }
+
+    public double getAlignmentWeight() {
+        return alignmentSlider.getValue() / 100.0; // Converti da percentuale a valore decimale
+    }
+
+    public double getCohesionWeight() {
+        return cohesionSlider.getValue() / 100.0; // Converti da percentuale a valore decimale
     }
 
     public void updateView() {

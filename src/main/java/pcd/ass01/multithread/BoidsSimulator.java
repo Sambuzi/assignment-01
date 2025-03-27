@@ -36,7 +36,7 @@ public class BoidsSimulator {
 
         // Crea un thread per ogni boid
         for (Boid boid : model.getBoids()) {
-            BoidThread thread = new BoidThread(boid, model);
+            BoidThread thread = new BoidThread(boid, model, view);
             threads.add(thread);
             thread.start();
         }
