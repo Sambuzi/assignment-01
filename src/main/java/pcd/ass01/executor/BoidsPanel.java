@@ -15,7 +15,7 @@ public class BoidsPanel extends JPanel {
         super.paintComponent(g);
 
         // Imposta il colore per i boid
-        g.setColor(Color.BLACK);
+        g.setColor(Color.BLUE);
 
         // Disegna ogni boid
         synchronized (model) {
