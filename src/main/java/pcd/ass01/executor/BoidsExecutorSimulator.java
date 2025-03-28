@@ -42,7 +42,7 @@ public class BoidsExecutorSimulator {
         isRunning = true;
 
         // Timer per aggiornare la GUI periodicamente
-        new Timer(40, e -> {
+        new Timer(32, e -> { // 32 ms = ~30 FPS
             if (!isPaused) {
                 view.updateView();
             }
@@ -50,12 +50,28 @@ public class BoidsExecutorSimulator {
 
         // Esegui un task per ogni boid
         for (Boid boid : model.getBoids()) {
-            executorService.submit(new BoidTask(boid, model, view));
-            System.out.println("Task submitted for Boid: " + boid); // Debug: Stampa quando un task viene inviato
+            executorService.submit(() -> {
+                try {
+                    while (!Thread.currentThread().isInterrupted()) {
+                        synchronized (this) {
+                            while (isPaused) {
+                                wait(); // Attendi finché non viene ripreso
+                            }
+                        }
+
+                        boid.updateVelocity(model, view.getSeparationWeight(), view.getAlignmentWeight(), view.getCohesionWeight());
+                        boid.updatePos(800, 600);
+
+                        Thread.sleep(40); // Simula un framerate (25 FPS = 40ms)
+                    }
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                }
+            });
         }
     }
 
-    public void togglePause() {
+    public synchronized void togglePause() {
         if (!isRunning) {
             return;
         }
@@ -66,6 +82,7 @@ public class BoidsExecutorSimulator {
             JOptionPane.showMessageDialog(view, "Simulazione sospesa.", "Pausa", JOptionPane.INFORMATION_MESSAGE);
         } else {
             JOptionPane.showMessageDialog(view, "Simulazione ripresa.", "Ripresa", JOptionPane.INFORMATION_MESSAGE);
+            notifyAll(); // Riprendi tutti i thread in attesa
         }
     }
 
