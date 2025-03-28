@@ -3,6 +3,8 @@ package pcd.ass01.executor;
 import javax.swing.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class BoidsExecutorSimulator {
     private final BoidsModel model;
@@ -10,6 +12,8 @@ public class BoidsExecutorSimulator {
     private ExecutorService executorService;
     private boolean isPaused = false;
     private boolean isRunning = false;
+    private final ReentrantLock lock = new ReentrantLock();
+    private final Condition pauseCondition = lock.newCondition();
 
     public BoidsExecutorSimulator(BoidsModel model) {
         this.model = model;
@@ -50,39 +54,23 @@ public class BoidsExecutorSimulator {
 
         // Esegui un task per ogni boid
         for (Boid boid : model.getBoids()) {
-            executorService.submit(() -> {
-                try {
-                    while (!Thread.currentThread().isInterrupted()) {
-                        synchronized (this) {
-                            while (isPaused) {
-                                wait(); // Attendi finché non viene ripreso
-                            }
-                        }
-
-                        boid.updateVelocity(model, view.getSeparationWeight(), view.getAlignmentWeight(), view.getCohesionWeight());
-                        boid.updatePos(800, 600);
-
-                        Thread.sleep(40); // Simula un framerate (25 FPS = 40ms)
-                    }
-                } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
-                }
-            });
+            executorService.submit(new BoidTask(boid, model, view, lock, pauseCondition, this));
         }
     }
 
-    public synchronized void togglePause() {
-        if (!isRunning) {
-            return;
-        }
+    public void togglePause() {
+        lock.lock();
+        try {
+            isPaused = !isPaused;
 
-        isPaused = !isPaused;
-
-        if (isPaused) {
-            JOptionPane.showMessageDialog(view, "Simulazione sospesa.", "Pausa", JOptionPane.INFORMATION_MESSAGE);
-        } else {
-            JOptionPane.showMessageDialog(view, "Simulazione ripresa.", "Ripresa", JOptionPane.INFORMATION_MESSAGE);
-            notifyAll(); // Riprendi tutti i thread in attesa
+            if (isPaused) {
+                JOptionPane.showMessageDialog(view, "Simulazione sospesa.", "Pausa", JOptionPane.INFORMATION_MESSAGE);
+            } else {
+                JOptionPane.showMessageDialog(view, "Simulazione ripresa.", "Ripresa", JOptionPane.INFORMATION_MESSAGE);
+                pauseCondition.signalAll(); // Risveglia tutti i thread in attesa
+            }
+        } finally {
+            lock.unlock();
         }
     }
 
@@ -95,5 +83,9 @@ public class BoidsExecutorSimulator {
         isPaused = false;
 
         view.updateView();
+    }
+
+    public boolean isPaused() {
+        return isPaused;
     }
 }
