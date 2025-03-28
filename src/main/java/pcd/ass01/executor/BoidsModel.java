@@ -1,20 +1,25 @@
 package pcd.ass01.executor;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class BoidsModel {
     private final List<Boid> boids;
 
     public BoidsModel() {
-        this.boids = new ArrayList<>();
+        this.boids = Collections.synchronizedList(new ArrayList<>());
     }
 
-    public synchronized List<Boid> getBoids() {
+    public List<Boid> getBoids() {
         return boids;
     }
 
-    public synchronized void addBoid(Boid boid) {
+    public void addBoid(Boid boid) {
         boids.add(boid);
+    }
+
+    public void clearBoids() {
+        boids.clear(); // Ripulisce la lista dei boid
     }
 }

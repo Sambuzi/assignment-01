@@ -7,9 +7,9 @@ import java.util.concurrent.Executors;
 public class BoidsExecutorSimulator {
     private final BoidsModel model;
     private final BoidsView view;
-    private ExecutorService executorService; // Pool di thread per i task
+    private ExecutorService executorService;
     private boolean isPaused = false;
-    private boolean isRunning = false; // Stato della simulazione
+    private boolean isRunning = false;
 
     public BoidsExecutorSimulator(BoidsModel model) {
         this.model = model;
@@ -22,25 +22,23 @@ public class BoidsExecutorSimulator {
 
     public void startSimulation() {
         if (isRunning) {
-            return; // Evita di avviare una nuova simulazione se è già in esecuzione
+            return;
         }
 
-        stopSimulation(); // Ferma eventuali simulazioni precedenti
+        stopSimulation();
 
-        int boidCount = view.getBoidCount(); // Numero di boid dalla GUI
-        model.getBoids().clear(); // Pulisci il modello esistente
+        int boidCount = view.getBoidCount();
+        model.clearBoids();
 
-        // Crea i boid
         for (int i = 0; i < boidCount; i++) {
             Boid boid = new Boid(
-                new P2d(Math.random() * 800, Math.random() * 600), // Posizione casuale
-                new V2d(Math.random() - 0.5, Math.random() - 0.5)  // Velocità casuale
+                new P2d(Math.random() * 800, Math.random() * 600),
+                new V2d(Math.random() - 0.5, Math.random() - 0.5)
             );
             model.addBoid(boid);
         }
 
-        // Crea un nuovo pool di thread
-        executorService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+        executorService = Executors.newFixedThreadPool(boidCount);
         isRunning = true;
 
         // Timer per aggiornare la GUI periodicamente
@@ -50,15 +48,16 @@ public class BoidsExecutorSimulator {
             }
         }).start();
 
-        // Esegui i task per ogni boid
+        // Esegui un task per ogni boid
         for (Boid boid : model.getBoids()) {
             executorService.submit(new BoidTask(boid, model, view));
+            System.out.println("Task submitted for Boid: " + boid); // Debug: Stampa quando un task viene inviato
         }
     }
 
     public void togglePause() {
         if (!isRunning) {
-            return; // Non fare nulla se la simulazione non è in esecuzione
+            return;
         }
 
         isPaused = !isPaused;
@@ -72,11 +71,12 @@ public class BoidsExecutorSimulator {
 
     public void stopSimulation() {
         if (executorService != null && !executorService.isShutdown()) {
-            executorService.shutdownNow(); // Arresta tutti i task
+            executorService.shutdownNow();
         }
-        model.getBoids().clear(); // Ripristina il modello
+        model.clearBoids();
         isRunning = false;
         isPaused = false;
-        view.updateView(); // Aggiorna la GUI per riflettere lo stato iniziale
+
+        view.updateView();
     }
 }

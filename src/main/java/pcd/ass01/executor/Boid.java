@@ -3,7 +3,7 @@ package pcd.ass01.executor;
 import java.util.List;
 
 public class Boid {
-    private static final double MAX_SPEED = 1.0; // Velocità massima
+    private static final double MAX_SPEED = 2.0; // Velocità massima
     private static final double SEPARATION_DISTANCE = 20.0; // Distanza minima per separazione
     private static final double ALIGNMENT_DISTANCE = 60.0; // Distanza massima per allineamento
     private static final double COHESION_DISTANCE = 60.0; // Distanza massima per coesione

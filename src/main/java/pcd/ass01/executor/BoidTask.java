@@ -16,10 +16,12 @@ public class BoidTask implements Runnable {
         try {
             while (!Thread.currentThread().isInterrupted()) {
                 // Debug: Stampa che il task è in esecuzione
-                System.out.println("Running task for " + boid);
+                System.out.println("Running task for Boid: " + boid);
 
-                boid.updateVelocity(model, view.getSeparationWeight(), view.getAlignmentWeight(), view.getCohesionWeight());
-                boid.updatePos(800, 600);
+                synchronized (model) {
+                    boid.updateVelocity(model, view.getSeparationWeight(), view.getAlignmentWeight(), view.getCohesionWeight());
+                    boid.updatePos(800, 600);
+                }
 
                 Thread.sleep(40); // Simula un framerate (25 FPS = 40ms)
             }
