@@ -1,0 +1,35 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+      {
+          "type": "java",
+          "name": "Run Multithread",
+          "request": "launch",
+          "mainClass": "pcd.ass01.multithread.Main",
+          "projectName": "assignment-01",
+          "classPaths": [
+              "${workspaceFolder}/target/classes"
+          ]
+      },
+      {
+          "type": "java",
+          "name": "Run Executor",
+          "request": "launch",
+          "mainClass": "pcd.ass01.executor.Main",
+          "projectName": "assignment-01",
+          "classPaths": [
+              "${workspaceFolder}/target/classes"
+          ]
+      },
+      {
+          "type": "java",
+          "name": "Run Virtual Thread",
+          "request": "launch",
+          "mainClass": "pcd.ass01.virtualthread.Main",
+          "projectName": "assignment-01",
+          "classPaths": [
+              "${workspaceFolder}/target/classes"
+          ]
+      }
+  ]
+}
