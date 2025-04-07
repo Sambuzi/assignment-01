@@ -5,18 +5,26 @@ import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.ActionListener;
 import java.util.Hashtable;
-
+/**
+ * BoidsView is a class that represents the graphical user interface for the boids simulation.
+ * It contains buttons, sliders, and a panel to display the boids.
+ */
 public class BoidsView extends JFrame {
     private final BoidsPanel panel;
     private final JButton startButton;
     private final JButton pauseButton;
     private final JButton stopButton;
     private final JTextField boidCountField;
-
     private final JSlider separationSlider;
     private final JSlider alignmentSlider;
     private final JSlider cohesionSlider;
-
+    /**
+     * Constructor for the BoidsView class.
+     * @param model The BoidsModel instance that contains the boids data.
+     * @param startListener ActionListener for the start button.
+     * @param pauseListener ActionListener for the pause/resume button.
+     * @param stopListener ActionListener for the stop button.
+     */
     public BoidsView(BoidsModel model, ActionListener startListener, ActionListener pauseListener, ActionListener stopListener) {
         setTitle("Boids Simulation - Execution Version");
         setSize(800, 600); // Altezza regolata per un layout più compatto
@@ -28,7 +36,7 @@ public class BoidsView extends JFrame {
         // Pannello per i pulsanti
         JPanel buttonPanel = new JPanel();
         buttonPanel.setLayout(new FlowLayout());
-        buttonPanel.setBorder(new EmptyBorder(5, 5, 5, 5)); // Margini ridotti
+        buttonPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 
         startButton = new JButton("Start");
         pauseButton = new JButton("Pause/Resume");
@@ -42,27 +50,22 @@ public class BoidsView extends JFrame {
         buttonPanel.add(pauseButton);
         buttonPanel.add(stopButton);
 
-        // Pannello per gli slider
         JPanel sliderPanel = new JPanel();
-        sliderPanel.setLayout(new GridLayout(3, 2, 5, 5)); // Griglia con due colonne e spaziatura ridotta
-        sliderPanel.setBorder(new EmptyBorder(5, 5, 5, 5)); // Margini ridotti
+        sliderPanel.setLayout(new GridLayout(3, 2, 5, 5));
+        sliderPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 
-        // Slider per separazione
-        separationSlider = createSliderWithLabels(1.0); // Valore iniziale 1.0
+        separationSlider = createSliderWithLabels(1.0);
         sliderPanel.add(new JLabel("Separation:"));
         sliderPanel.add(separationSlider);
 
-        // Slider per allineamento
-        alignmentSlider = createSliderWithLabels(0.5); // Valore iniziale 0.5
+        alignmentSlider = createSliderWithLabels(0.5);
         sliderPanel.add(new JLabel("Alignment:"));
         sliderPanel.add(alignmentSlider);
 
-        // Slider per coesione
-        cohesionSlider = createSliderWithLabels(0.5); // Valore iniziale 0.5
+        cohesionSlider = createSliderWithLabels(0.5);
         sliderPanel.add(new JLabel("Cohesion:"));
         sliderPanel.add(cohesionSlider);
 
-        // Pannello principale per controlli
         JPanel controlPanel = new JPanel();
         controlPanel.setLayout(new BorderLayout());
         controlPanel.add(buttonPanel, BorderLayout.NORTH);
@@ -70,32 +73,35 @@ public class BoidsView extends JFrame {
 
         add(controlPanel, BorderLayout.SOUTH);
 
-        // Assegna i listener ai pulsanti
         startButton.addActionListener(startListener);
         pauseButton.addActionListener(pauseListener);
         stopButton.addActionListener(stopListener);
 
         setVisible(true);
     }
-
+    /**
+     * Creates a slider with labels for the weights of the boids' behaviors.
+     * @param initialValue The initial value of the slider.
+     * @return A JSlider with labels.
+     */
     private JSlider createSliderWithLabels(double initialValue) {
-        // Slider con range da 0 a 2
-        JSlider slider = new JSlider(0, 200, (int) (initialValue * 100)); // Scala da 0 a 200 per rappresentare 0.0 a 2.0
-        slider.setPaintTicks(false);      // Non mostra i tick
-        slider.setPaintLabels(true);      // Mostra solo le etichette principali
+        JSlider slider = new JSlider(0, 200, (int) (initialValue * 100));
+        slider.setPaintTicks(false);
+        slider.setPaintLabels(true);
 
-        // Etichette personalizzate per i valori principali
         Hashtable<Integer, JLabel> labelTable = new Hashtable<>();
         labelTable.put(0, new JLabel("0"));
         labelTable.put(100, new JLabel("1"));
         labelTable.put(200, new JLabel("2"));
         slider.setLabelTable(labelTable);
 
-        // Imposta dimensioni compatte
-        slider.setPreferredSize(new Dimension(150, 40)); // Larghezza 150px, altezza 40px
+        slider.setPreferredSize(new Dimension(150, 40));
         return slider;
     }
-
+    /**
+     * Sets the action command for the boids count.
+     * @param command the boids count.
+     */
     public int getBoidCount() {
         try {
             int count = Integer.parseInt(boidCountField.getText());
@@ -105,27 +111,42 @@ public class BoidsView extends JFrame {
             return count;
         } catch (NumberFormatException e) {
             JOptionPane.showMessageDialog(this, "Inserisci un numero valido di boid (maggiore di 0).", "Errore", JOptionPane.ERROR_MESSAGE);
-            boidCountField.setText("500"); // Ripristina il valore predefinito
-            return 500; // Valore predefinito
+            boidCountField.setText("500");
+            return 500;
         }
     }
-
+    /**
+     * Returns the value of the separation weight.
+     * @return The separation weight as a double.
+     */
     public double getSeparationWeight() {
         return separationSlider.getValue() / 100.0; // Converti da scala 0-200 a 0.0-2.0
     }
-
+    /**
+     * Returns the value of the alignment weight.
+     * @return The alignment weight as a double.
+     */
     public double getAlignmentWeight() {
         return alignmentSlider.getValue() / 100.0; // Converti da scala 0-200 a 0.0-2.0
     }
-
+    /**
+     * Returns the value of the cohesion weight.
+     * @return The cohesion weight as a double.
+     */
     public double getCohesionWeight() {
         return cohesionSlider.getValue() / 100.0; // Converti da scala 0-200 a 0.0-2.0
     }
-
+    /**
+     * Returns the boids panel.
+     * @return The BoidsPanel instance.
+     */
     public void updateView() {
         panel.repaint();
     }
-
+    /**
+     * Sets the boid count in the text field.
+     * @param numBoids The number of boids to set.
+     */
     public void setBoidCount(int numBoids) {
         boidCountField.setText(String.valueOf(numBoids));
     }

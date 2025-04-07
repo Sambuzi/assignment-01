@@ -1,21 +1,28 @@
 package pcd.ass01.executor;
 
 import java.util.List;
-
+/** This class represents a Boid in the simulation. */
 public class Boid {
-    private static final double MAX_SPEED = 2.0; // Velocità massima
-    private static final double SEPARATION_DISTANCE = 20.0; // Distanza minima per separazione
-    private static final double ALIGNMENT_DISTANCE = 60.0; // Distanza massima per allineamento
-    private static final double COHESION_DISTANCE = 60.0; // Distanza massima per coesione
-
+    private static final double MAX_SPEED = 2.0;
+    private static final double SEPARATION_DISTANCE = 20.0;
+    private static final double ALIGNMENT_DISTANCE = 60.0;
+    private static final double COHESION_DISTANCE = 60.0;
     private P2d position;
     private V2d velocity;
-
+    /**
+     * Constructor for the Boid class.
+     * @param position
+     * @param velocity
+     */
     public Boid(P2d position, V2d velocity) {
         this.position = position;
         this.velocity = velocity;
     }
-
+    /**
+     * Updates the position of the boid based on its velocity and the simulation boundaries.
+     * @param width Width of the simulation area.
+     * @param height Height of the simulation area.
+     */
     public void updateVelocity(BoidsModel model, double separationWeight, double alignmentWeight, double cohesionWeight) {
         List<Boid> boids = model.getBoids();
 
@@ -32,7 +39,11 @@ public class Boid {
         // Debug: Stampa la nuova velocità
         //System.out.println("Boid " + this + " updated velocity: " + velocity);
     }
-
+    /**
+     * Updates the position of the boid based on its velocity and the simulation boundaries.
+     * @param width Width of the simulation area.
+     * @param height Height of the simulation area.
+     */ 
     public void updatePos(int width, int height) {
         position = position.sum(velocity);
 
@@ -61,14 +72,20 @@ public class Boid {
         // Debug: Stampa la nuova posizione
        // System.out.println("Boid " + this + " updated position: " + position);
     }
-
+    /**
+     * Limits the velocity of the boid to a maximum speed.
+     */
     private void limitVelocity() {
         double speed = Math.sqrt(velocity.getX() * velocity.getX() + velocity.getY() * velocity.getY());
         if (speed > MAX_SPEED) {
             velocity = velocity.normalize().mul(MAX_SPEED);
         }
     }
-
+    /**
+     * Computes the separation vector to avoid crowding neighbors.
+     * @param boids List of all boids in the simulation.
+     * @return Separation vector.
+     */ 
     private V2d computeSeparation(List<Boid> boids) {
         V2d separation = new V2d(0, 0);
         for (Boid other : boids) {
@@ -82,7 +99,11 @@ public class Boid {
         }
         return separation;
     }
-
+    /**
+     * Computes the alignment vector to steer towards the average heading of neighbors.
+     * @param boids List of all boids in the simulation.
+     * @return Alignment vector.
+     */
     private V2d computeAlignment(List<Boid> boids) {
         V2d alignment = new V2d(0, 0);
         int count = 0;
@@ -97,7 +118,11 @@ public class Boid {
         }
         return count > 0 ? alignment.mul(1.0 / count) : alignment;
     }
-
+    /**
+     * Computes the cohesion vector to steer towards the average position of neighbors.
+     * @param boids List of all boids in the simulation.
+     * @return Cohesion vector.
+     */
     private V2d computeCohesion(List<Boid> boids) {
         P2d centerOfMass = new P2d(0, 0);
         int count = 0;
@@ -117,11 +142,17 @@ public class Boid {
         }
         return new V2d(0, 0);
     }
-
+    /**
+     * Returns the position of the boid.
+     * @return Position of the boid.
+     */
     public P2d getPosition() {
         return position;
     }
-
+    /**
+     * Returns the velocity of the boid.
+     * @return Velocity of the boid.
+     */
     public V2d getVelocity() {
         return velocity;
     }

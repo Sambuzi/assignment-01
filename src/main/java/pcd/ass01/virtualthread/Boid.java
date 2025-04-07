@@ -1,21 +1,35 @@
 package pcd.ass01.virtualthread;
 
 import java.util.List;
-
+/**
+ * Represents a single boid in the simulation.
+ */
 public class Boid {
-    private static final double MAX_SPEED = 2.0; // Velocità massima
-    private static final double SEPARATION_DISTANCE = 20.0; // Distanza minima per separazione
-    private static final double ALIGNMENT_DISTANCE = 60.0; // Distanza massima per allineamento
-    private static final double COHESION_DISTANCE = 60.0; // Distanza massima per coesione
+    private static final double MAX_SPEED = 2.0;
+    private static final double SEPARATION_DISTANCE = 20.0;
+    private static final double ALIGNMENT_DISTANCE = 60.0;
+    private static final double COHESION_DISTANCE = 60.0;
 
     private P2d position;
     private V2d velocity;
-
+    /**
+     * Constructor to initialize a boid with a position and velocity.
+     *
+     * @param position The initial position of the boid.
+     * @param velocity The initial velocity of the boid.
+     */
     public Boid(P2d position, V2d velocity) {
         this.position = position;
         this.velocity = velocity;
     }
-
+    /**
+     * Updates the velocity of the boid based on the positions and velocities of other boids.
+     *
+     * @param model The model containing all boids.
+     * @param separationWeight Weight for separation behavior.
+     * @param alignmentWeight Weight for alignment behavior.
+     * @param cohesionWeight Weight for cohesion behavior.
+     */
     public void updateVelocity(BoidsModel model, double separationWeight, double alignmentWeight, double cohesionWeight) {
         List<Boid> boids = model.getBoids();
 
@@ -32,11 +46,14 @@ public class Boid {
         // Debug: Stampa la nuova velocità
         //System.out.println("Boid " + this + " updated velocity: " + velocity);
     }
-
+    /**
+     * Updates the position of the boid based on its velocity and the screen dimensions.
+     *
+     * @param width  The width of the screen.
+     * @param height The height of the screen.
+     */
     public void updatePos(int width, int height) {
         position = position.sum(velocity);
-
-        // Controlla i limiti dello schermo
         double x = position.getX();
         double y = position.getY();
 
@@ -61,14 +78,24 @@ public class Boid {
         // Debug: Stampa la nuova posizione
         //System.out.println("Boid " + this + " updated position: " + position);
     }
-
+    /**
+     * Updates the position of the boid based on its velocity and the screen dimensions.
+     *
+     * @param width  The width of the screen.
+     * @param height The height of the screen.
+     */
     private void limitVelocity() {
         double speed = Math.sqrt(velocity.getX() * velocity.getX() + velocity.getY() * velocity.getY());
         if (speed > MAX_SPEED) {
             velocity = velocity.normalize().mul(MAX_SPEED);
         }
     }
-
+    /**
+     * Computes the separation vector to avoid crowding other boids.
+     *
+     * @param boids The list of all boids in the simulation.
+     * @return The separation vector.
+     */
     private V2d computeSeparation(List<Boid> boids) {
         V2d separation = new V2d(0, 0);
         for (Boid other : boids) {
@@ -82,7 +109,12 @@ public class Boid {
         }
         return separation;
     }
-
+    /**
+     * Computes the alignment vector to match the velocity of nearby boids.
+     *
+     * @param boids The list of all boids in the simulation.
+     * @return The alignment vector.
+     */ 
     private V2d computeAlignment(List<Boid> boids) {
         V2d alignment = new V2d(0, 0);
         int count = 0;
@@ -97,7 +129,12 @@ public class Boid {
         }
         return count > 0 ? alignment.mul(1.0 / count) : alignment;
     }
-
+    /**
+     * Computes the cohesion vector to steer towards the average position of nearby boids.
+     *
+     * @param boids The list of all boids in the simulation.
+     * @return The cohesion vector.
+     */
     private V2d computeCohesion(List<Boid> boids) {
         P2d centerOfMass = new P2d(0, 0);
         int count = 0;
@@ -117,14 +154,22 @@ public class Boid {
         }
         return new V2d(0, 0);
     }
-
+    /**
+     * Returns the position of the boid.
+     *
+     * @return The position of the boid.
+     */
     public P2d getPosition() {
         return position;
     }
-
+    /**
+     * Returns the velocity of the boid.
+     *
+     * @return The velocity of the boid.
+     */
     public V2d getVelocity() {
         return velocity;
-    }
+    } 
 
     @Override
     public String toString() {
