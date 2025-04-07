@@ -88,4 +88,7 @@ public class BoidsExecutorSimulator {
     public boolean isPaused() {
         return isPaused;
     }
+    public BoidsView getView() {
+        return view;
+    }
 }

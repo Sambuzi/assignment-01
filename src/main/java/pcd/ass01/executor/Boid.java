@@ -30,7 +30,7 @@ public class Boid {
         limitVelocity(); // Limita la velocità
 
         // Debug: Stampa la nuova velocità
-        System.out.println("Boid " + this + " updated velocity: " + velocity);
+        //System.out.println("Boid " + this + " updated velocity: " + velocity);
     }
 
     public void updatePos(int width, int height) {
@@ -59,7 +59,7 @@ public class Boid {
         position = new P2d(x, y);
 
         // Debug: Stampa la nuova posizione
-        System.out.println("Boid " + this + " updated position: " + position);
+       // System.out.println("Boid " + this + " updated position: " + position);
     }
 
     private void limitVelocity() {

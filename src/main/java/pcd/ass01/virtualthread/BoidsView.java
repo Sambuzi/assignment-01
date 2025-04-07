@@ -125,4 +125,8 @@ public class BoidsView extends JFrame {
     public void updateView() {
         panel.repaint();
     }
+
+    public void setBoidCount(int numBoids) {
+        boidCountField.setText(String.valueOf(numBoids));
+    }
 }

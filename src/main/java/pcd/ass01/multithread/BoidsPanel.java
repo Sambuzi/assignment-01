@@ -3,14 +3,26 @@ package pcd.ass01.multithread;
 import javax.swing.*;
 import java.awt.*;
 import java.util.List;
-
+/**
+ * This class represents the graphical panel for displaying the boids simulation.
+ * It extends JPanel and overrides the paintComponent method to draw the boids on the panel.
+ */
 public class BoidsPanel extends JPanel {
     private final BoidsModel model;
-
+    /**
+     * Constructor to initialize the BoidsPanel with a BoidsModel.
+     *
+     * @param model The BoidsModel that contains the boids to be displayed.
+     */
     public BoidsPanel(BoidsModel model) {
         this.model = model;
     }
-
+    /**
+     * This method is called whenever the panel needs to be repainted.
+     * It clears the panel and draws the boids on it.
+     *
+     * @param g The Graphics object used for drawing.
+     */
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);

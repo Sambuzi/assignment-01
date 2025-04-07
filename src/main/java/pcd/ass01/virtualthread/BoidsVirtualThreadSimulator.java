@@ -79,4 +79,7 @@ public class BoidsVirtualThreadSimulator {
 
         view.updateView();
     }
+    public BoidsView getView() {
+        return view;
+    }
 }
