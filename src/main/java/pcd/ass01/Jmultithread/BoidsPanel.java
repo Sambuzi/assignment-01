@@ -3,10 +3,16 @@ package pcd.ass01.Jmultithread;
 import javax.swing.*;
 import java.awt.*;
 import java.util.List;
-
+/**
+ * This class represents the graphical panel for the boids simulation for jpf.
+ * It extends JPanel and is responsible for rendering the boids on the screen.
+ */ 
 public class BoidsPanel extends JPanel {
     private final BoidsModel model;
-
+    /**
+     * Constructor to initialize the BoidsPanel with a BoidsModel.
+     * @param model
+     */
     public BoidsPanel(BoidsModel model) {
         this.model = model;
     }
